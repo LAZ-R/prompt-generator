@@ -1,4 +1,4 @@
-var cacheName = 'prompt-generator-0001';
+var cacheName = 'prompt-generator-0002';
 var filesToCache = [
   './',
   './index.html',
@@ -25,4 +25,4 @@ self.addEventListener('fetch', function(e) {
   );
 });
 
-const version = '0.0.0.1';
+const version = '0.0.0.2';

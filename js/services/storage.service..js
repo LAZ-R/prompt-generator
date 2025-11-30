@@ -8,6 +8,10 @@ export const setStorage = () => {
     STORAGE.setItem(`${appLocalStorageId}FirstTime`, '0');
     
     let userTMP = {
+      CURRENTLY_SELECTED_VALUE_ID_BASE: null,
+      CURRENTLY_SELECTED_VALUE_ID_SUBJECT: null,
+      CURRENTLY_SELECTED_VALUE_ID_ACTION: null,
+      CURRENTLY_SELECTED_VALUE_ID_CCONTEXT: null,
       CATEGORIES: [
         {
           name: 'Base',

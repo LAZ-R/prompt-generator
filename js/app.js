@@ -24,11 +24,6 @@ document.getElementsByClassName('lzr')[0].style = `--theme: '${user.PREFERED_THE
 
 // EXECUTION //////////////////////////////////////////////////////////////////////////////////////
 
-let currentlySelectedBase = null;
-let currentlySelectedSubject = null;
-let currentlySelectedAction = null;
-let currentlySelectedContext = null;
-
 let currentCreationCategoryName = '';
 let currentCreationObj = {
 	id: 0,
@@ -150,6 +145,22 @@ function onCreateValueClick() {
   let user = getUser();
   let category = user.CATEGORIES.find((category) => category.name == currentCreationCategoryName);
   category.values.push(currentCreationObj);
+  switch (category.name) {
+    case 'Base':
+      user.CURRENTLY_SELECTED_VALUE_ID_BASE = currentCreationObj.id;
+      break;
+    case 'Subject':
+      user.CURRENTLY_SELECTED_VALUE_ID_SUBJECT = currentCreationObj.id;
+      break;
+    case 'Action':
+      user.CURRENTLY_SELECTED_VALUE_ID_ACTION = currentCreationObj.id;
+      break;
+    case 'Context':
+      user.CURRENTLY_SELECTED_VALUE_ID_CONTEXT = currentCreationObj.id;
+      break;
+    default:
+      break;
+  }
   setUser(user);
 
   setCategoriesDom();
@@ -235,6 +246,22 @@ function onSaveValueClick() {
 
   value.title = currentEditionObj.title;
   value.description = currentEditionObj.description;
+  switch (category.name) {
+    case 'Base':
+      user.CURRENTLY_SELECTED_VALUE_ID_BASE = currentEditionObj.id;
+      break;
+    case 'Subject':
+      user.CURRENTLY_SELECTED_VALUE_ID_SUBJECT = currentEditionObj.id;
+      break;
+    case 'Action':
+      user.CURRENTLY_SELECTED_VALUE_ID_ACTION = currentEditionObj.id;
+      break;
+    case 'Context':
+      user.CURRENTLY_SELECTED_VALUE_ID_CONTEXT = currentEditionObj.id;
+      break;
+    default:
+      break;
+  }
   setUser(user);
 
   setCategoriesDom();
@@ -274,6 +301,30 @@ function onConfirmDeleteValueClick() {
   let category = user.CATEGORIES.find((category) => category.name == currentDeleteCategoryName);
   let value = category.values.find((value) => value.id == currentDeleteObj.id);
 
+  switch (category.name) {
+    case 'Base':
+      if (user.CURRENTLY_SELECTED_VALUE_ID_BASE == currentDeleteObj.id) {
+        user.CURRENTLY_SELECTED_VALUE_ID_BASE = null;
+      }
+      break;
+    case 'Subject':
+      if (user.CURRENTLY_SELECTED_VALUE_ID_SUBJECT == currentDeleteObj.id) {
+        user.CURRENTLY_SELECTED_VALUE_ID_SUBJECT = null;
+      }
+      break;
+    case 'Action':
+      if (user.CURRENTLY_SELECTED_VALUE_ID_ACTION == currentDeleteObj.id) {
+        user.CURRENTLY_SELECTED_VALUE_ID_ACTION = null;
+      }
+      break;
+    case 'Context':
+      if (user.CURRENTLY_SELECTED_VALUE_ID_CONTEXT == currentDeleteObj.id) {
+        user.CURRENTLY_SELECTED_VALUE_ID_CONTEXT = null;
+      }
+      break;
+    default:
+      break;
+  }
   category.values.splice(category.values.indexOf(value), 1);
   setUser(user);
 
@@ -292,9 +343,32 @@ window.onSelectChange = onSelectChange;
 
 
 function getCategorySelect(category) {
+  let user = getUser();
+  let valueId = null;
+
+  function getSelectedValueIdForCategory(category) {
+    switch (category.name) {
+      case 'Base':
+        valueId = user.CURRENTLY_SELECTED_VALUE_ID_BASE;
+        break;
+      case 'Subject':
+        valueId = user.CURRENTLY_SELECTED_VALUE_ID_SUBJECT;
+        break;
+      case 'Action':
+        valueId = user.CURRENTLY_SELECTED_VALUE_ID_ACTION;
+        break;
+      case 'Context':
+        valueId = user.CURRENTLY_SELECTED_VALUE_ID_CONTEXT;
+        break;
+      default:
+        break;
+    }
+    return valueId;
+  }
+
   let str = `<select id="select${category.name}" class="lzr-select lzr-solid" onchange="onSelectChange(event)">`;
   for (let value of category.values) {
-    str += `<option value="${value.id}">${value.title}</option>`;
+    str += `<option value="${value.id}" ${getSelectedValueIdForCategory(category) == value.id ? 'selected' : ''}>${value.title}</option>`;
   }
   str += '</select>';
   return str;
