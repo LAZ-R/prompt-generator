@@ -1,0 +1,26 @@
+.lzr {
+
+  .lzr-footer {
+    position: relative;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    min-width: 100%; width: 100%; max-width: 100%;
+    min-height: var(--height--footer); height: var(--height--footer); max-height: var(--height--footer);
+    background-color: var(--color--bg-default);
+    color: var(--color--fg-0);
+    padding: 8px var(--horizontal-padding);
+    gap: 16px;
+
+    .help-button {
+      width: 35px;
+      padding: 8px;
+    }
+    
+    .next-phase-button {
+      margin: 0;
+      width: 100%;
+      padding: 8px;
+    }
+  }
+}

@@ -1,0 +1,16 @@
+.lzr {
+
+  .lzr-checkbox {
+    --size: 16px;
+    box-sizing: border-box;
+    appearance: none;
+    cursor: pointer;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+    opacity: 1;
+    min-width: var(--size); width: var(--size); max-width: var(--size);
+    min-height: var(--size); height: var(--size); max-height: var(--size);
+    background-color: red;
+  }
+}
