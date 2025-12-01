@@ -263,7 +263,7 @@ function onSaveValueClick() {
       break;
   }
   setUser(user);
-
+  
   setCategoriesDom();
   setTextArea();
   SLIDE_PANEL.classList.add('hidden');
@@ -335,8 +335,27 @@ function onConfirmDeleteValueClick() {
 window.onConfirmDeleteValueClick = onConfirmDeleteValueClick;
 
 
-function onSelectChange(event) {
+function onSelectChange(event, categoryName) {
   //console.log(event.target.value);
+  let user = getUser();
+  switch (categoryName) {
+    case 'Base':
+      user.CURRENTLY_SELECTED_VALUE_ID_BASE = event.target.value;
+      break;
+    case 'Subject':
+      user.CURRENTLY_SELECTED_VALUE_ID_SUBJECT = event.target.value;
+      break;
+    case 'Action':
+      user.CURRENTLY_SELECTED_VALUE_ID_ACTION = event.target.value;
+      break;
+    case 'Context':
+      user.CURRENTLY_SELECTED_VALUE_ID_CONTEXT = event.target.value;
+      break;
+    default:
+      break;
+  }
+  setUser(user);
+  setCategoriesDom();
   setTextArea();
 }
 window.onSelectChange = onSelectChange;
@@ -366,7 +385,7 @@ function getCategorySelect(category) {
     return valueId;
   }
 
-  let str = `<select id="select${category.name}" class="lzr-select lzr-solid" onchange="onSelectChange(event)">`;
+  let str = `<select id="select${category.name}" class="lzr-select lzr-solid" onchange="onSelectChange(event, '${category.name}')">`;
   for (let value of category.values) {
     str += `<option value="${value.id}" ${getSelectedValueIdForCategory(category) == value.id ? 'selected' : ''}>${value.title}</option>`;
   }
