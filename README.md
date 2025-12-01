@@ -1,6 +1,6 @@
 # Prompt generator
 `pre-alpha`  
-`v 0.0.0.3`
+`v 0.0.0.4`
 
 ## ...
     

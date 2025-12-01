@@ -5,24 +5,12 @@ import { setHTMLTitle, logAppInfos } from "./utils/UTILS.js";
 import { requestWakeLock } from "./utils/wakelock.js";
 
 //import { deleteStorage, getStorageDom, getUser, setStorage, setUser } from "./services/storage.service..js";
+
+// VARIABLES //////////////////////////////////////////////////////////////////////////////////////
+
 const MAIN = document.getElementById('main');
 const SLIDE_PANEL = document.getElementById('slidePanel');
 const CATEGORIES_CONTAINER = document.getElementById('categoriesContainer');
-
-// INITIALIZATION /////////////////////////////////////////////////////////////////////////////////
-
-logAppInfos(APP_NAME, APP_VERSION);
-setHTMLTitle(APP_NAME);
-setStorage();
-
-// Set user preferences
-let user = getUser();
-if (user.KEEP_SCREEN_AWAKE) {
-  requestWakeLock();
-}
-document.getElementsByClassName('lzr')[0].style = `--theme: '${user.PREFERED_THEME}';`;
-
-// EXECUTION //////////////////////////////////////////////////////////////////////////////////////
 
 let currentCreationCategoryName = '';
 let currentCreationObj = {
@@ -45,9 +33,74 @@ let currentDeleteObj = {
 	description: '',
 }
 
-document.getElementById('copyButton').innerHTML = `${getSvgIcon('copy')} Copy to clipboard`;
+// FONCTIONS //////////////////////////////////////////////////////////////////////////////////////
 
-setCategoriesDom();
+// Homepage ###################################################################
+
+// DOM ---------------------------
+
+function getCategorySelect(category) {
+  let user = getUser();
+  let valueId = null;
+
+  function getSelectedValueIdForCategory(category) {
+    switch (category.name) {
+      case 'Base':
+        valueId = user.CURRENTLY_SELECTED_VALUE_ID_BASE;
+        break;
+      case 'Subject':
+        valueId = user.CURRENTLY_SELECTED_VALUE_ID_SUBJECT;
+        break;
+      case 'Action':
+        valueId = user.CURRENTLY_SELECTED_VALUE_ID_ACTION;
+        break;
+      case 'Context':
+        valueId = user.CURRENTLY_SELECTED_VALUE_ID_CONTEXT;
+        break;
+      default:
+        break;
+    }
+    return valueId;
+  }
+
+  let str = `<select id="select${category.name}" class="lzr-select lzr-solid" onchange="onSelectChange(event, '${category.name}')">`;
+  for (let value of category.values) {
+    str += `<option value="${value.id}" ${getSelectedValueIdForCategory(category) == value.id ? 'selected' : ''}>${value.title}</option>`;
+  }
+  str += '</select>';
+  return str;
+}
+
+function getCategoryDom(category) {
+  let str = `
+    <div class="category">
+      <span class="category-title">${category.name}</span>
+      <div class="category-bottom">
+        ${getCategorySelect(category)}
+        <div class="category-buttons">
+          <button class="lzr-button lzr-square lzr-solid lzr-info" onclick="onEditCategoryClick('${category.name}')">${getSvgIcon('edit')}</button>
+          <button class="lzr-button lzr-square lzr-solid lzr-info" onclick="onNewValueClick('${category.name}')">${getSvgIcon('plus')}</button>
+        </div>
+      </div>
+    </div>
+  `;
+  return str;
+}
+
+function getCategoriesDom() {
+  let user = getUser();
+
+  let str = ``;
+  for (let category of user.CATEGORIES) {
+    str += getCategoryDom(category);
+  }
+  return str;
+}
+
+function setCategoriesDom() {
+  CATEGORIES_CONTAINER.innerHTML = getCategoriesDom();
+}
+
 function setTextArea() {
   let user = getUser();
 
@@ -67,14 +120,80 @@ function setTextArea() {
 
   document.getElementById('mainTextarea').value = textAreaString;
 }
-setTextArea();
 
-// NEW VALUE ////////////////////////////////////////
+// OnChange ---------------------------
+
+function onSelectChange(event, categoryName) {
+  let user = getUser();
+  switch (categoryName) {
+    case 'Base':
+      user.CURRENTLY_SELECTED_VALUE_ID_BASE = event.target.value;
+      break;
+    case 'Subject':
+      user.CURRENTLY_SELECTED_VALUE_ID_SUBJECT = event.target.value;
+      break;
+    case 'Action':
+      user.CURRENTLY_SELECTED_VALUE_ID_ACTION = event.target.value;
+      break;
+    case 'Context':
+      user.CURRENTLY_SELECTED_VALUE_ID_CONTEXT = event.target.value;
+      break;
+    default:
+      break;
+  }
+  setUser(user);
+  setCategoriesDom();
+  setTextArea();
+}
+window.onSelectChange = onSelectChange;
+
+function onCopyClick() {
+  const TEXT = document.getElementById('mainTextarea').value;
+  navigator.clipboard.writeText(TEXT);
+}
+window.onCopyClick = onCopyClick;
+
+
+// Slide panel ###################################################################
 
 function onCloseSlidePanelClick() {
   SLIDE_PANEL.classList.add('hidden');
 }
 window.onCloseSlidePanelClick = onCloseSlidePanelClick;
+
+// OnChange ---------------------------
+
+function onTitleChange(event, mode) {
+  console.log(event.target.value);
+  switch (mode) {
+    case 'creation':
+      currentCreationObj.title = event.target.value;
+      break;
+  case 'edition':
+      currentEditionObj.title = event.target.value;
+      break;
+    default:
+      break;
+  }
+}
+window.onTitleChange = onTitleChange;
+
+function onDescChange(event, mode) {
+  console.log(event.target.value);
+  switch (mode) {
+    case 'creation':
+      currentCreationObj.description = event.target.value;
+      break;
+  case 'edition':
+      currentEditionObj.description = event.target.value;
+      break;
+    default:
+      break;
+  }
+}
+window.onDescChange = onDescChange;
+
+// NEW VALUE ==============================================
 
 function onNewValueClick(categoryName) {
   currentCreationCategoryName = '';
@@ -111,36 +230,6 @@ function onNewValueClick(categoryName) {
 }
 window.onNewValueClick = onNewValueClick;
 
-function onTitleChange(event, mode) {
-  console.log(event.target.value);
-  switch (mode) {
-    case 'creation':
-      currentCreationObj.title = event.target.value;
-      break;
-  case 'edition':
-      currentEditionObj.title = event.target.value;
-      break;
-    default:
-      break;
-  }
-}
-window.onTitleChange = onTitleChange;
-
-function onDescChange(event, mode) {
-  console.log(event.target.value);
-  switch (mode) {
-    case 'creation':
-      currentCreationObj.description = event.target.value;
-      break;
-  case 'edition':
-      currentEditionObj.description = event.target.value;
-      break;
-    default:
-      break;
-  }
-}
-window.onDescChange = onDescChange;
-
 function onCreateValueClick() {
   let user = getUser();
   let category = user.CATEGORIES.find((category) => category.name == currentCreationCategoryName);
@@ -169,7 +258,7 @@ function onCreateValueClick() {
 }
 window.onCreateValueClick = onCreateValueClick;
 
-// EDIT VALUE ////////////////////////////////////////
+// EDIT VALUE =============================================
 
 function onEditCategoryClick(categoryName) {
   console.log(categoryName)
@@ -182,7 +271,7 @@ function onEditCategoryClick(categoryName) {
     for (let value of category.values) {
       str += `
       <div class="value-bloc">
-        <span>${value.title}</span>
+        <span class="value-title">${value.title}</span>
         <div class="edit-buttons">
           <button class="lzr-button lzr-square lzr-solid lzr-info" onclick="onEditValueClick('${category.name}', '${value.id}')">${getSvgIcon('edit')}</button>
           <button class="lzr-button lzr-square lzr-solid lzr-error" onclick="onDeleteValueClick('${category.name}', '${value.id}')">${getSvgIcon('trash')}</button>
@@ -199,7 +288,9 @@ function onEditCategoryClick(categoryName) {
       <h1>Edit ${category.name}</h1>
       <button class="lzr-button lzr-square lzr-outlined" onclick="onCloseSlidePanelClick()">${getSvgIcon('xmark')}</button>
     </div>
-    ${getCategoryValuesDom(category)}
+    <div class="slide-body">
+      ${getCategoryValuesDom(category)}
+    </div>
   `;
   SLIDE_PANEL.classList.remove('hidden');
 }
@@ -223,6 +314,8 @@ function onEditValueClick(categoryName, valueId) {
     <div class="slide-header">
       <h1>Edit ${currentEditionObj.title}</h1>
       <button class="lzr-button lzr-square lzr-outlined" onclick="onCloseSlidePanelClick()">${getSvgIcon('xmark')}</button>
+    </div>
+    <div class="slide-body">
     </div>
     <label>Title</label>
     <input type="text" oninput="onTitleChange(event, 'edition')" value="${value.title}"/>
@@ -269,6 +362,8 @@ function onSaveValueClick() {
   SLIDE_PANEL.classList.add('hidden');
 }
 window.onSaveValueClick = onSaveValueClick;
+
+// DELETE VALUE ===========================================
 
 function onDeleteValueClick(categoryName, valueId) {
   currentDeleteCategoryName = categoryName;
@@ -334,100 +429,21 @@ function onConfirmDeleteValueClick() {
 }
 window.onConfirmDeleteValueClick = onConfirmDeleteValueClick;
 
+// INITIALIZATION /////////////////////////////////////////////////////////////////////////////////
 
-function onSelectChange(event, categoryName) {
-  //console.log(event.target.value);
-  let user = getUser();
-  switch (categoryName) {
-    case 'Base':
-      user.CURRENTLY_SELECTED_VALUE_ID_BASE = event.target.value;
-      break;
-    case 'Subject':
-      user.CURRENTLY_SELECTED_VALUE_ID_SUBJECT = event.target.value;
-      break;
-    case 'Action':
-      user.CURRENTLY_SELECTED_VALUE_ID_ACTION = event.target.value;
-      break;
-    case 'Context':
-      user.CURRENTLY_SELECTED_VALUE_ID_CONTEXT = event.target.value;
-      break;
-    default:
-      break;
-  }
-  setUser(user);
-  setCategoriesDom();
-  setTextArea();
+logAppInfos(APP_NAME, APP_VERSION);
+setHTMLTitle(APP_NAME);
+setStorage();
+
+// Setting user preferences
+let user = getUser();
+if (user.KEEP_SCREEN_AWAKE) {
+  requestWakeLock();
 }
-window.onSelectChange = onSelectChange;
+document.getElementsByClassName('lzr')[0].style = `--theme: '${user.PREFERED_THEME}';`;
 
+// EXECUTION //////////////////////////////////////////////////////////////////////////////////////
 
-function getCategorySelect(category) {
-  let user = getUser();
-  let valueId = null;
-
-  function getSelectedValueIdForCategory(category) {
-    switch (category.name) {
-      case 'Base':
-        valueId = user.CURRENTLY_SELECTED_VALUE_ID_BASE;
-        break;
-      case 'Subject':
-        valueId = user.CURRENTLY_SELECTED_VALUE_ID_SUBJECT;
-        break;
-      case 'Action':
-        valueId = user.CURRENTLY_SELECTED_VALUE_ID_ACTION;
-        break;
-      case 'Context':
-        valueId = user.CURRENTLY_SELECTED_VALUE_ID_CONTEXT;
-        break;
-      default:
-        break;
-    }
-    return valueId;
-  }
-
-  let str = `<select id="select${category.name}" class="lzr-select lzr-solid" onchange="onSelectChange(event, '${category.name}')">`;
-  for (let value of category.values) {
-    str += `<option value="${value.id}" ${getSelectedValueIdForCategory(category) == value.id ? 'selected' : ''}>${value.title}</option>`;
-  }
-  str += '</select>';
-  return str;
-}
-
-function getCategoryDom(category) {
-  let str = `
-    <div class="category">
-      <span class="category-title">${category.name}</span>
-      <div class="category-bottom">
-        ${getCategorySelect(category)}
-        <div class="category-buttons">
-          <button class="lzr-button lzr-square lzr-solid lzr-info" onclick="onEditCategoryClick('${category.name}')">${getSvgIcon('edit')}</button>
-          <button class="lzr-button lzr-square lzr-solid lzr-info" onclick="onNewValueClick('${category.name}')">${getSvgIcon('plus')}</button>
-        </div>
-      </div>
-    </div>
-  `;
-  return str;
-}
-
-function getCategoriesDom() {
-  let user = getUser();
-
-  let str = ``;
-  for (let category of user.CATEGORIES) {
-    str += getCategoryDom(category);
-  }
-  return str;
-}
-
-function setCategoriesDom() {
-  CATEGORIES_CONTAINER.innerHTML = getCategoriesDom();
-
-}
-
-function onCopyClick() {
-  const TEXT = document.getElementById('mainTextarea').value;
-  console.log(TEXT);
-  document.getElementById('mainTextarea').select();
-  document.execCommand("copy");
-}
-window.onCopyClick = onCopyClick;
+document.getElementById('copyButton').innerHTML = `${getSvgIcon('copy')} Copy to clipboard`;
+setCategoriesDom();
+setTextArea();

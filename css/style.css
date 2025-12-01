@@ -109,31 +109,49 @@ Divers
     }
   }
 
-  .values-list {
+  .slide-body {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
     width: 100%;
-    gap: 16px;
+    overflow-y: scroll;
+    &::-webkit-scrollbar {
+      display: none;
+    }
 
-    .value-bloc {
+    .values-list {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
       width: 100%;
-      background-color: var(--color--bg-default);
-      border-radius: var(--border-radius--default);
-      padding: 8px;
-
-      .edit-buttons {
+      gap: 16px;
+  
+      .value-bloc {
         display: flex;
-        justify-content: flex-start;
+        justify-content: space-between;
         align-items: center;
-        gap: 8px;
+        width: 100%;
+        background-color: var(--color--bg-default);
+        border-radius: var(--border-radius--default);
+        padding: 8px;
+
+        .value-title {
+          font-weight: 500;
+        }
+  
+        .edit-buttons {
+          display: flex;
+          justify-content: flex-start;
+          align-items: center;
+          gap: 8px;
+        }
       }
     }
   }
+
+
 
 
   input {
