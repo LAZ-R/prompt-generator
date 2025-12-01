@@ -1,7 +1,7 @@
 export const APP_NAME = "Prompt generator";
-export const APP_VERSION = '0.0.0.4';
+export const APP_VERSION = '0.0.0.5';
 export const APP_LOCAL_STORAGE_ID = `prompt-generator-0002`;
 
 // CHANGELOG
 
-// v 0.0.0.4 - fix clipboard + code cleaning
+// v 0.0.0.5 - update graphics

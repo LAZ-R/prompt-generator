@@ -63,7 +63,7 @@ function getCategorySelect(category) {
     return valueId;
   }
 
-  let str = `<select id="select${category.name}" class="lzr-select lzr-solid" onchange="onSelectChange(event, '${category.name}')">`;
+  let str = `<select id="select${category.name}" class="lzr-select lzr-outlined" onchange="onSelectChange(event, '${category.name}')">`;
   for (let value of category.values) {
     str += `<option value="${value.id}" ${getSelectedValueIdForCategory(category) == value.id ? 'selected' : ''}>${value.title}</option>`;
   }
@@ -74,12 +74,14 @@ function getCategorySelect(category) {
 function getCategoryDom(category) {
   let str = `
     <div class="category">
-      <span class="category-title">${category.name}</span>
+      <div class="category-top">
+        <span class="category-title">${category.name}</span>
+      </div>
       <div class="category-bottom">
         ${getCategorySelect(category)}
         <div class="category-buttons">
           <button class="lzr-button lzr-square lzr-solid lzr-info" onclick="onEditCategoryClick('${category.name}')">${getSvgIcon('edit')}</button>
-          <button class="lzr-button lzr-square lzr-solid lzr-info" onclick="onNewValueClick('${category.name}')">${getSvgIcon('plus')}</button>
+          <button class="lzr-button lzr-square lzr-solid lzr-success" onclick="onNewValueClick('${category.name}')">${getSvgIcon('plus')}</button>
         </div>
       </div>
     </div>

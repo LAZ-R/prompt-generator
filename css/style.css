@@ -44,30 +44,46 @@ Divers
     background-color: var(--color--bg-default);
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: flex-start;
     width: 100%;
-    padding: 8px var(--horizontal-padding);
+    padding: 8px;
     border-radius: var(--border-radius--default);
     gap: 8px;
 
-    .category-title {
-      font-size: 18px;
-      font-weight: 500;
-    }
+    .category-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      width: 100%;
 
+      .category-title {
+        font-size: 18px;
+        font-weight: 500;
+      }
+
+    }
+    
     .category-bottom {
       display: flex;
       justify-content: space-between;
+      align-items: flex-end;
       width: 100%;
+      gap: 8px;
+      
+      select {
+        width: 100%;
+        align-items: flex-start;
+      }
 
       .category-buttons {
         display: flex;
-        justify-content: flex-start;
-        align-items: center;
+        justify-content: flex-end;
+        align-items: flex-end;
         gap: 8px;
       }
     }
+
   }
 }
 
