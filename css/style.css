@@ -74,6 +74,14 @@ Divers
       select {
         width: 100%;
         align-items: flex-start;
+
+        selectedcontent {
+          max-width: calc(100% - 10.55px - 8px);
+          text-wrap: nowrap;
+          overflow-x: hidden;
+          text-overflow: ellipsis;
+        }
+
       }
 
       .category-buttons {

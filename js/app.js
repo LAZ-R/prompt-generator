@@ -63,7 +63,12 @@ function getCategorySelect(category) {
     return valueId;
   }
 
-  let str = `<select id="select${category.name}" class="lzr-select lzr-outlined" onchange="onSelectChange(event, '${category.name}')">`;
+  let str = `
+    <select id="select${category.name}" class="lzr-select lzr-outlined" onchange="onSelectChange(event, '${category.name}')">
+      <button id=custombutton>
+        <selectedcontent></selectedcontent>
+      </button>
+  `;
   for (let value of category.values) {
     str += `<option value="${value.id}" ${getSelectedValueIdForCategory(category) == value.id ? 'selected' : ''}>${value.title}</option>`;
   }
